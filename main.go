@@ -11,6 +11,8 @@ import (
 
 func main() {
 
+	log.Println("newsy-mastodon application starting up...")
+
 	hackerNewsNumberOfStories, err := strconv.Atoi(os.Getenv("HN_NUMBER_OF_STORIES"))
 	if err != nil {
 		log.Fatal("The required environment variable HN_NUMBER_OF_STORIES could not be parsed into an int ", err)
@@ -33,6 +35,9 @@ func main() {
 			AccessToken:  mastodonAccessToken,
 		})}
 
+	log.Printf("Publishing %d top HN stories to Mastodon %v every hour, on top of the hour",
+		hackerNewsNumberOfStories,
+		mastodonBaseUrl)
 	ticker := time.Tick(time.Minute)
 	for range ticker {
 		now := time.Now()
