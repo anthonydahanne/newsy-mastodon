@@ -2,6 +2,8 @@
 
 A Mastodon Bot that toots the top 5 stories from HackerNews, at the top of every hour.
 
+There is a live instance of this bot (hosted on https://fly.io/) publishing to this account: https://framapiaf.org/@newsycombinator - check it out! 
+
 ## How to build
 
 ```go build .```
