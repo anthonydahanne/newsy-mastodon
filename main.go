@@ -9,6 +9,8 @@ import (
 	"time"
 )
 
+var publishedStories []Story
+
 func main() {
 
 	log.Println("newsy-mastodon application starting up...")
@@ -42,7 +44,8 @@ func main() {
 	for range ticker {
 		now := time.Now()
 		if now.Minute() == 0 {
-			retrieveTopStoriesAndPostThemToMastodon(hn, mastodonClient, hackerNewsNumberOfStories)
+			_, stories := retrieveTopStoriesAndPostThemToMastodon(hn, mastodonClient, hackerNewsNumberOfStories)
+			publishedStories = append(publishedStories, stories...)
 		}
 	}
 }
@@ -55,14 +58,16 @@ func lookupEnvAndFailIfNotPresent(key string) string {
 	return value
 }
 
-func retrieveTopStoriesAndPostThemToMastodon(hn *HackerNews, mastodonClient *MastodonClient, numberOfStories int) []*mastodon.Status {
+func retrieveTopStoriesAndPostThemToMastodon(hn *HackerNews, mastodonClient *MastodonClient, numberOfStories int) ([]*mastodon.Status, []Story) {
 	postedStatuses := make([]*mastodon.Status, 0, numberOfStories)
 
 	stories, err := hn.GetTopStories(numberOfStories)
 	if err != nil {
 		log.Println("Could not get the latest stories", err)
-		return nil
+		return nil, nil
 	}
+
+	deDuplicateStories(&stories)
 
 	for _, story := range stories {
 		log.Printf("About to publish to Mastodon this story %v", story)
@@ -72,5 +77,20 @@ func retrieveTopStoriesAndPostThemToMastodon(hn *HackerNews, mastodonClient *Mas
 		}
 		postedStatuses = append(postedStatuses, status)
 	}
-	return postedStatuses
+	return postedStatuses, stories
+}
+
+func deDuplicateStories(stories *[]Story) {
+	storyMap := make(map[Story]bool)
+	for _, story := range publishedStories {
+		storyMap[story] = true
+	}
+
+	var uniqueStories []Story
+	for _, story := range *stories {
+		if _, value := storyMap[story]; !value {
+			uniqueStories = append(uniqueStories, story)
+		}
+	}
+	*stories = uniqueStories
 }
