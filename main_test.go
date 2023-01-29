@@ -34,7 +34,7 @@ func TestRetrieveTopStoriesAndPostThemToMastodon(t *testing.T) {
 		URL:        "https://www.wsj.com/articles/why-paper-map-sales-are-booming-11674164824",
 		CommentURL: "https://news.ycombinator.com/item?id=34469378",
 	}
-	if statuses[0].Content != fmt.Sprintf("%v\n%v", expectedStory.Title, expectedStory.URL) || expectedStory != stories[0] {
+	if statuses[0].Content != fmt.Sprintf("%s\nLink: %v\nComments: %v", expectedStory.Title, expectedStory.URL, expectedStory.CommentURL) || expectedStory != stories[0] {
 		t.Errorf("The posted status did not match the story : %v", statuses[0].Content)
 	}
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/mattn/go-mastodon"
 	"log"
 	"net/http"
@@ -71,7 +72,7 @@ func retrieveTopStoriesAndPostThemToMastodon(hn *HackerNews, mastodonClient *Mas
 
 	for _, story := range stories {
 		log.Printf("About to publish to Mastodon this story %v", story)
-		status, err := mastodonClient.sendStatus(story.Title + "\n" + story.URL)
+		status, err := mastodonClient.sendStatus(fmt.Sprintf("%s\nLink: %v\nComments: %v", story.Title, story.URL, story.CommentURL))
 		if err != nil {
 			log.Println("Could not publish to Mastodon", err)
 		}
