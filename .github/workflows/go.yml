@@ -50,7 +50,7 @@ jobs:
     - uses: superfly/flyctl-actions/setup-flyctl@master
 
     - name: Deploy image
-      run: flyctl launch --image ghcr.io/anthonydahanne/newsy-mastodon
+      run: flyctl deploy --image ghcr.io/anthonydahanne/newsy-mastodon
       env:
         FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
