@@ -10,7 +10,8 @@ processes = []
 
 [env]
   HN_NUMBER_OF_STORIES = 5
-  MASTODON_BASE_URL = "https://framapiaf.org"
+  HN_MASTODON_BASE_URL = "https://framapiaf.org"
+  SLASHDOT_MASTODON_BASE_URL = "https://framapiaf.org"
 
 [experimental]
   auto_rollback = true

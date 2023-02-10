@@ -12,13 +12,6 @@ const hackerNewsTopStoriesEndpoint = hackerNewsBaseUrl + "v0/topstories.json"
 const hackerNewsStoryEndpoint = hackerNewsBaseUrl + "v0/item/%d.json"
 const hackerNewsPublicItemEndpoint = "https://news.ycombinator.com/item?id=%d"
 
-type Story struct {
-	Id         int    `json:"id"`
-	Title      string `json:"title"`
-	URL        string `json:"url"`
-	CommentURL string
-}
-
 type HackerNews struct {
 	httpClient *http.Client
 }

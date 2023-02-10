@@ -39,6 +39,36 @@ func TestRetrieveTopStoriesAndPostThemToMastodon(t *testing.T) {
 	}
 }
 
+func TestRetrieveLatestArticlesAndPostThemToMastodon(t *testing.T) {
+	spyingMastodonClient := SpyingMastodonClient{}
+	client := &MastodonClient{
+		mastodonClient:       &spyingMastodonClient,
+		mastodonBaseUrl:      "https://one.mastodon.server",
+		mastodonClientId:     "client_id",
+		mastodonClientSecret: "client_secret",
+		mastodonAccessToken:  "access_token",
+	}
+	httpClientWithMockTransport := &http.Client{
+		Transport: &mockTransportSlashDot{},
+	}
+	slashdot := &Slashdot{httpClientWithMockTransport}
+
+	statuses, stories := retrieveLatestArticlesAndPostThemToMastodon(slashdot, client)
+
+	if len(statuses) != 3 {
+		t.Errorf("There should be exactly 1 status, but there were : %d", len(statuses))
+	}
+
+	expectedStory := Story{
+		Id:    170306193,
+		Title: "Kraken Settles With SEC For $30 Million, Agrees To Shutter Crypto-Staking Operation (coindesk.com)",
+		URL:   "https://slashdot.org/story/23/02/09/2127238/kraken-settles-with-sec-for-30-million-agrees-to-shutter-crypto-staking-operation",
+	}
+	if statuses[1].Content != fmt.Sprintf("%s\nLink: %v", expectedStory.Title, expectedStory.URL) || expectedStory != stories[1] {
+		t.Errorf("The posted status did not match the story : %v", statuses[0].Content)
+	}
+}
+
 func TestLookupEnvAndFailIfNotPresent(t *testing.T) {
 	os.Setenv("PIF", "pof")
 	value := lookupEnvAndFailIfNotPresent("PIF")
@@ -48,7 +78,7 @@ func TestLookupEnvAndFailIfNotPresent(t *testing.T) {
 }
 
 func TestDeDuplicateStories(t *testing.T) {
-	publishedStories = []Story{
+	publishedHNStories = []Story{
 		{Id: 1, Title: "Story 1", URL: "URL 1", CommentURL: "Comment URL 1"},
 		{Id: 2, Title: "Story 2", URL: "URL 2", CommentURL: "Comment URL 2"},
 		{Id: 3, Title: "Story 3", URL: "URL 3", CommentURL: "Comment URL 3"},
@@ -65,7 +95,7 @@ func TestDeDuplicateStories(t *testing.T) {
 		{Id: 5, Title: "Story 5", URL: "URL 5", CommentURL: "Comment URL 5"},
 	}
 
-	deDuplicateStories(&input)
+	deDuplicateStories(&input, publishedHNStories)
 
 	if !reflect.DeepEqual(input, expected) {
 		t.Errorf("Expected %v but got %v", expected, input)
