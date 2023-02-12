@@ -62,7 +62,7 @@ func main() {
 			publishedHNStories = append(publishedHNStories, stories...)
 		} else if now.Minute() == 30 {
 			_, articles := retrieveLatestArticlesAndPostThemToMastodon(slashdot, slashdotMastodonClient)
-			publishedSlashdotArticles = append(publishedHNStories, articles...)
+			publishedSlashdotArticles = append(publishedSlashdotArticles, articles...)
 
 		}
 	}
@@ -119,6 +119,7 @@ func deDuplicateAndPostStoriesToMastodon(stories []Story, publishedStories []Sto
 }
 
 func deDuplicateStories(stories *[]Story, publishedStories []Story) {
+	log.Printf("Entered with %d published stories and %d new stories", len(publishedStories), len(*stories))
 	storyMap := make(map[Story]bool)
 	for _, story := range publishedStories {
 		storyMap[story] = true
@@ -131,6 +132,8 @@ func deDuplicateStories(stories *[]Story, publishedStories []Story) {
 		}
 	}
 	*stories = uniqueStories
+	log.Printf("Left with %d new stories", len(*stories))
+
 }
 
 type Story struct {

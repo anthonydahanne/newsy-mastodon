@@ -78,7 +78,7 @@ func TestLookupEnvAndFailIfNotPresent(t *testing.T) {
 }
 
 func TestDeDuplicateStories(t *testing.T) {
-	publishedHNStories = []Story{
+	publishedStories := []Story{
 		{Id: 1, Title: "Story 1", URL: "URL 1", CommentURL: "Comment URL 1"},
 		{Id: 2, Title: "Story 2", URL: "URL 2", CommentURL: "Comment URL 2"},
 		{Id: 3, Title: "Story 3", URL: "URL 3", CommentURL: "Comment URL 3"},
@@ -95,7 +95,31 @@ func TestDeDuplicateStories(t *testing.T) {
 		{Id: 5, Title: "Story 5", URL: "URL 5", CommentURL: "Comment URL 5"},
 	}
 
-	deDuplicateStories(&input, publishedHNStories)
+	deDuplicateStories(&input, publishedStories)
+
+	if !reflect.DeepEqual(input, expected) {
+		t.Errorf("Expected %v but got %v", expected, input)
+	}
+}
+
+func TestDeDuplicateStoriesNoComment(t *testing.T) {
+	publishedArticles := []Story{
+		{
+			Id:    170314377,
+			Title: "Americans Are Ready To Test Embryos For Future College Chances, Survey Shows (technologyreview.com)",
+			URL:   "https://science.slashdot.org/story/23/02/10/2335258/americans-are-ready-to-test-embryos-for-future-college-chances-survey-shows"},
+	}
+
+	input := []Story{
+		{
+			Id:    170314377,
+			Title: "Americans Are Ready To Test Embryos For Future College Chances, Survey Shows (technologyreview.com)",
+			URL:   "https://science.slashdot.org/story/23/02/10/2335258/americans-are-ready-to-test-embryos-for-future-college-chances-survey-shows"},
+	}
+
+	var expected []Story
+
+	deDuplicateStories(&input, publishedArticles)
 
 	if !reflect.DeepEqual(input, expected) {
 		t.Errorf("Expected %v but got %v", expected, input)
