@@ -45,7 +45,7 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Build and push image
-      run: pack build ghcr.io/anthonydahanne/newsy-mastodon --buildpack paketo-buildpacks/go --builder paketobuildpacks/builder:base --publish
+      run: pack build ghcr.io/anthonydahanne/newsy-mastodon --buildpack paketo-buildpacks/go --builder paketobuildpacks/builder-jammy-base --publish
 
     - uses: superfly/flyctl-actions/setup-flyctl@master
 
