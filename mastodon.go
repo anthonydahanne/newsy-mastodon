@@ -15,7 +15,7 @@ type MastodonClient struct {
 }
 
 func (m *MastodonClient) sendStatus(statusContent string) (*mastodon.Status, error) {
-	toot := &mastodon.Toot{Status: statusContent}
+	toot := &mastodon.Toot{Status: statusContent, Language: "en"}
 	status, err := m.mastodonClient.PostStatus(context.Background(), toot)
 	if err != nil {
 		return nil, err
